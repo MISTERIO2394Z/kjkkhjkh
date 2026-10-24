@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PROTO.DEV | Asistente de Precálculo · UMG</title>
+  <meta name="description" content="PROTO.DEV: asistente de precálculo de la Universidad Mariano Gálvez de Guatemala, sección B.">
+  <link rel="icon" href="logo_umg.webp" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Librerías de matemáticas (necesitan Internet) -->
+  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@13.2.0/lib/browser/math.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <!-- ===== ENCABEZADO ===== -->
+  <header class="hero">
+    <h1 class="wordmark" aria-label="PROTO punto DEV">proto<span class="dot">.</span>dev<span class="cursor" aria-hidden="true">_</span></h1>
+    <p class="tagline">Escribe un ejercicio de precálculo. PROTO.DEV lo resuelve, lo grafica y te explica el procedimiento.</p>
+  </header>
+
+  <!-- ===== FICHA DEL EQUIPO ===== -->
+  <section class="ficha" aria-label="Datos académicos">
+    <img class="escudo" src="logo_umg.webp" alt="Escudo de la Universidad Mariano Gálvez de Guatemala" width="132" height="132">
+    <div class="ficha-datos">
+      <p class="uni">Universidad Mariano Gálvez de Guatemala</p>
+      <dl>
+        <div><dt>Curso</dt><dd>Precálculo</dd></div>
+        <div><dt>Sección</dt><dd>B</dd></div>
+        <div class="ancho"><dt>Catedrático</dt><dd>Ing. Reyes Baltazar Maza Guerra</dd></div>
+        <div class="ancho"><dt>Integrantes</dt>
+          <dd>Jhónatan Emanuel Cúnay Quiñonez<br>Christian José Daniel Santos Cua</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===== VENTANA PRINCIPAL ===== -->
+  <main class="ventana">
+    <div class="barra" role="tablist" aria-label="Secciones">
+      <button class="tab activa" role="tab" data-tab="resolver" aria-selected="true">resolver.js</button>
+      <button class="tab" role="tab" data-tab="trigo" aria-selected="false">trigonometria.js</button>
+      <button class="tab" role="tab" data-tab="ejemplos" aria-selected="false">ejemplos.js</button>
+      <button class="tab" role="tab" data-tab="python" aria-selected="false">laboratorio.py</button>
+    </div>
+
+    <!-- Pestaña 1: resolver -->
+    <section class="panel" id="tab-resolver" role="tabpanel">
+      <label for="expr">Ejercicio</label>
+      <div class="entrada">
+        <span class="prompt" aria-hidden="true">f(x) &gt;</span>
+        <input id="expr" placeholder="2*x + 5 = 17" autocomplete="off" spellcheck="false">
+        <button id="solve" class="primario">Resolver</button>
+      </div>
+      <p class="ayuda">Usa <code>x</code> como variable. Potencias con <code>^</code> (x^2), multiplicación con <code>*</code>. Funciones: sin(x) o sen(x), cos(x), tan(x), sqrt(x), log(x), exp(x). Para la hoja de trigonometría usa la pestaña trigonometria.js.</p>
+
+      <div class="acciones" id="acciones"></div>
+
+      <h2>Procedimiento y respuesta</h2>
+      <pre id="result" role="status" aria-live="polite">Hola, soy PROTO.DEV.
+Escribe un ejercicio arriba o abre la pestaña ejemplos.js.</pre>
+      <div id="plot"></div>
+
+      <section class="practica" id="practice" hidden>
+        <h2>Práctica rápida</h2>
+        <p id="question"></p>
+        <div class="entrada">
+          <span class="prompt" aria-hidden="true">resp &gt;</span>
+          <input id="answer" placeholder="Escribe tu respuesta" autocomplete="off" spellcheck="false">
+          <button id="check" class="primario">Comprobar</button>
+        </div>
+        <p id="feedback" role="status"></p>
+      </section>
+    </section>
+
+    <!-- Pestaña 2: trigonometría (hoja de trabajo, Temas 5 y 6) -->
+    <section class="panel" id="tab-trigo" role="tabpanel" hidden>
+      <label for="trig-tool">Herramienta</label>
+      <select id="trig-tool"></select>
+      <p class="ayuda" id="trig-ayuda"></p>
+      <div class="campos" id="trig-campos"></div>
+      <div class="entrada"><button id="trig-run" class="primario">Calcular</button></div>
+      <h2>Procedimiento y respuesta</h2>
+      <pre id="trig-out" role="status" aria-live="polite">Elige una herramienta, completa los datos y pulsa Calcular. También puedes cargar un ejercicio desde ejemplos.js.</pre>
+      <div id="plot-trig"></div>
+    </section>
+
+    <!-- Pestaña 3: ejemplos -->
+    <section class="panel" id="tab-ejemplos" role="tabpanel" hidden>
+      <p class="ayuda">Diez ejercicios listos. Al elegir uno, se carga en el solucionador y se resuelve solo.</p>
+      <div class="ejemplos" id="ejemplos"></div>
+      <h2>Hoja de trabajo: Temas 5 y 6 (trigonometría)</h2>
+      <p class="ayuda">Los ejercicios marcados como plantilla tienen datos de ejemplo: cámbialos por los de tu hoja en la pestaña trigonometria.js.</p>
+      <div class="ejemplos" id="ejemplos-hoja"></div>
+    </section>
+
+    <!-- Pestaña 4: Python -->
+    <section class="panel" id="tab-python" role="tabpanel" hidden>
+      <p class="ayuda">Este código corre en tu navegador con Python real (Pyodide). Cambia los números y pulsa Ejecutar. La primera vez tarda unos segundos en cargar.</p>
+      <div class="presets">
+        <button class="chip" data-preset="cuadratica">Ecuación cuadrática</button>
+        <button class="chip" data-preset="tabla">Tabla de valores</button>
+        <button class="chip" data-preset="trigo">Razones de un ángulo</button>
+        <button class="chip" data-preset="doble">Ángulo doble</button>
+      </div>
+      <label for="codigo">Código Python</label>
+      <textarea id="codigo" spellcheck="false" rows="16"></textarea>
+      <div class="entrada"><button id="run-py" class="primario">Ejecutar en Python</button></div>
+      <h2>Salida</h2>
+      <pre id="salida-py" role="status" aria-live="polite">Aquí aparecerá el resultado.</pre>
+    </section>
+  </main>
+
+  <footer>
+    PROTO.DEV · Precálculo, sección B · Universidad Mariano Gálvez de Guatemala<br>
+    Los resultados son una guía de estudio: verifica siempre sustituyendo en el ejercicio original.
+  </footer>
+</div>
+
+<script src="app.js"></script>
+<script src="trig.js"></script>
+</body>
+</html>
